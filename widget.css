@@ -1,0 +1,113 @@
+.deployment-visual-creation{
+  display: flex;
+  flex-flow: row wrap;
+  align-content: stretch;
+  align-items: stretch;
+  margin-top:20px;
+}
+
+.deployment-visual-creation .chart-box{
+  flex-basis: 33%;
+  border-radius: 4px;
+  /* width: 350px; */
+  padding: 10px;
+  /* box-sizing: border-box; */
+}
+
+
+
+
+
+/**
+ * select box style 1
+ */
+.selectbox-style1 {
+  display: flex;
+  font: 12px tahoma;
+  margin: 15px 0px;
+}
+
+.selectbox-style1 .item {
+  flex-basis: 0;
+  flex-shrink: 1;
+  flex-grow: 1;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 5px;
+  margin: 4px;
+  border: 1px solid #ddd;
+  border-bottom-width: 5px;
+  cursor: pointer;
+  transition: all 400ms ease-in-out;
+  box-sizing: border-box;
+  padding: 10px 10px;
+}
+
+.selectbox-style1 .item h1,
+.selectbox-style1 .item h2,
+.selectbox-style1 .item h3,
+.selectbox-style1 .item h4,
+.selectbox-style1 .item p {
+  margin: 3px;
+}
+
+.selectbox-style1 .item.active {
+  background-color: rgb(0, 165, 0) !important;
+  border-bottom-color: rgb(1, 134, 1) !important;
+  color: white;
+  box-shadow: 0 8px 6px -6px rgba(0, 0, 0, .3);
+
+}
+
+.selectbox-style1 .item:hover {
+  background-color: #eee;
+  border-bottom-color: rgb(0, 165, 0);
+}
+
+
+/**
+ * select box style 2
+ */
+.selectbox-style2 {
+  display: flex;
+  font: 14px tahoma;
+  background-color: #eee;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 15px 0px;
+}
+
+.selectbox-style2 .item {
+  flex-basis: 0;
+  flex-shrink: 1;
+  flex-grow: 1;
+  text-align: center;
+  box-shadow: inset 0px 0px 15px 2px rgba(0, 0, 0, .2);
+  background-color: #fff;
+  border-radius: 10px;
+  margin: 4px;
+  border: 3px solid #eee;
+  cursor: pointer;
+  transition: all 400ms ease-in-out;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.selectbox-style2 .item h1,
+.selectbox-style2 .item h2,
+.selectbox-style2 .item h3,
+.selectbox-style2 .item h4,
+.selectbox-style2 .item p {
+  margin: 3px;
+}
+
+.selectbox-style2 .item.active {
+  background-color: rgb(0, 165, 0) !important;
+  color: white;
+  box-shadow: inset 0px 8px 30px 2px rgba(255, 255, 255, .5);
+}
+
+.selectbox-style2 .item:hover {
+  background-color: #eee;
+  border-color: rgb(0, 165, 0) !important;
+}
