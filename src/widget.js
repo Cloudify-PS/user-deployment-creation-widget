@@ -19,7 +19,10 @@ Stage.defineWidget({
     categories: [Stage.GenericConfig.CATEGORY.SYSTEM_RESOURCES],
 
     initialConfiguration: [
-      { id: 'deploymentId', name: 'Deployment Id', default: 'cloudify-deployment-visualization-widget-sample', type: Stage.Basic.GenericField.STRING },      
+      { id: 'blueprintId', name: 'Blueprint Id', default: 'COV', type: Stage.Basic.GenericField.STRING },      
+      { id: 'deploymentId', name: 'Deployment Id', default: 'cloudify-deployment-visualization-widget-sample', type: Stage.Basic.GenericField.STRING },
+      {id: 'allowNameEdit', name: 'Allow User to change Deployment Name', default: true, type: Stage.Basic.GenericField.BOOLEAN_TYPE},
+      {id: 'devMode', name: 'Enable Developers Mode', default: false, type: Stage.Basic.GenericField.BOOLEAN_TYPE},
     ],
 
     fetchData (widget, toolbox, params) {
@@ -28,7 +31,7 @@ Stage.defineWidget({
           ...widget.configuration,
         });
         
-        return actions.doGetDeployment ();
+        return actions.doGetInputDescriptor ();
     },
 
     render: function (widget, data, error, toolbox) {
