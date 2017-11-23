@@ -21,8 +21,6 @@ export default class List extends React.Component {
     const user = this.props.toolbox.getManager().getCurrentUsername();
     const blueprint = this.props.widget.configuration.blueprintId;
     const time64 = base10to64(Math.floor(Date.now() / 1000));
-    // const time64 = btoa(Math.floor(Date.now() / 1000));
-    // const time64 = btoa(Math.round(Math.random()*10000));
 
     this.state = {
       form: {},
@@ -31,22 +29,25 @@ export default class List extends React.Component {
       success: null,
       deploymentTitle: `admin deployment ${user}_${blueprint}_${time64}`,
       loading: false,
-      yamlError: null,
-      development: null
+      yamlError: null
     };
   }
 
-
   componentWillMount() {
     let data = this.props.data;
-    this.setState({ development: data })
+    this.props.toolbox.getEventBus().on('devmode:render', res => res.widgetId === this.props.widget.id && this.renderJSON2YAML(res.data), this);
+    this.props.toolbox.getEventBus().trigger('devmode:update', data, this.props.widget);
+
     this.renderJSON2YAML(data);
+  }
+  componentWillUnmount() {
+    this.props.toolbox.getEventBus().off('devmode:render', this._devmode, this);
   }
 
   renderJSON2YAML(value) {
     this.setState({ yamlError: null })
     try {
-      let data = YAML.parse(value || this.state.development);
+      let data = YAML.parse(value);
       this.prepareData(data);
     } catch (e) {
       this.setState({ yamlError: e.message })
@@ -104,12 +105,8 @@ export default class List extends React.Component {
     this.setState({ errors });
     if (Object.keys(errors).length === 0) {
 
-      // let selectedDeployment = toolbox.getContext().getValue('deploymentId');
-      // var blueprintId = toolbox.getContext().getValue('blueprintId');
-
       const blueprint = this.props.widget.configuration.blueprintId;
-      // const deployment = this.props.widget.configuration.deploymentId;
-      const deployment = this.state.deploymentTitle;//new Date().toISOString();
+      const deployment = this.state.deploymentTitle;
       const privateResource = false;
       const skipPluginsValidation = false;
       const inputs = {
@@ -126,7 +123,7 @@ export default class List extends React.Component {
           this.setState({ loading: false, errors: {}, success: 'Your request has been submitted and awaiting approval' });
           const onFinishRedirect = this.props.widget.configuration.onFinishRedirect;
           const template = this.props.widget.configuration.template;
-          if(onFinishRedirect){
+          if (onFinishRedirect) {
             this.props.toolbox.drillDown(this.props.widget, template, { deploymentId: deployment.id }, deployment.id);
           }
         })
@@ -268,29 +265,11 @@ export default class List extends React.Component {
     </Message>;
 
     const allowNameEdit = this.props.widget.configuration.allowNameEdit;
-    const devMode = this.props.widget.configuration.devMode;
 
-    console.log
     return <div>
       {errorMessage}
       {successMessage}
-
-      {devMode &&
-        <Card fluid>
-          <Card.Content header='Development Mode (you can deactivate it from widget settings)' />
-          <Card.Content>
-            {yamlError}
-            <textArea
-              placeholder="YAML Development Mode"
-              value={this.state.development}
-              onChange={(event) => this.setState({ development: event.target.value })}
-              style={{ width: '100%', height: '200px', fontFamily: 'monospace,monospace', fontSize: '1em' }}
-              />
-          </Card.Content>
-          <Card.Content extra>
-            <Button color="blue" onClick={() => this.renderJSON2YAML.call(this)}>Render</Button>
-          </Card.Content>
-        </Card>}
+      {yamlError}
 
       {!this.state.success && allowNameEdit && <Input
         fluid
