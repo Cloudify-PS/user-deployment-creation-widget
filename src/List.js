@@ -109,12 +109,14 @@ export default class List extends React.Component {
       const deployment = this.state.deploymentTitle;
       const privateResource = false;
       const skipPluginsValidation = false;
+      
+      const deployment_inputs = Object.assign({}, this.state.form, {deployment_id: 'request_to_admin_' + deployment})
+
       const inputs = {
         'blueprint_id': 'service',
-        'deployment_inputs': this.state.form,
-        'deployment_id': 'request_to_admin_' + deployment
+        'deployment_inputs': deployment_inputs
       }
-      // const inputs = this.state.form;
+      
 
       this.setState({ loading: true });
       var actions = new Stage.Common.BlueprintActions(this.props.toolbox);
