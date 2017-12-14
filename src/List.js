@@ -18,16 +18,12 @@ export default class List extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    const user = this.props.toolbox.getManager().getCurrentUsername();
-    const blueprint = this.props.widget.configuration.blueprintId;
-    const time64 = base10to64(Math.floor(Date.now() / 1000));
-
     this.state = {
       form: {},
       visual_data: {},
       errors: {},
       success: null,
-      deploymentTitle: `admin deployment ${user}_${blueprint}_${time64}`,
+      deploymentTitle: '',
       loading: false,
       yamlError: null
     };
@@ -37,11 +33,20 @@ export default class List extends React.Component {
     let data = this.props.data;
     this.props.toolbox.getEventBus().on('devmode:render', res => res.widgetId === this.props.widget.id && this.renderJSON2YAML(res.data), this);
     this.props.toolbox.getEventBus().trigger('devmode:update', data, this.props.widget);
-
+    
+    this.updateDeploymentName();
     this.renderJSON2YAML(data);
   }
   componentWillUnmount() {
     this.props.toolbox.getEventBus().off('devmode:render', this._devmode, this);
+  }
+
+  updateDeploymentName(){
+    const user = this.props.toolbox.getManager().getCurrentUsername();
+    const blueprint = this.props.widget.configuration.blueprintId;
+    const time64 = base10to64(Math.floor(Date.now() / 1000));
+    const deploymentTitle = `admin deployment ${user}_${blueprint}_${time64}`;
+    this.setState({deploymentTitle});
   }
 
   renderJSON2YAML(value) {
@@ -110,18 +115,22 @@ export default class List extends React.Component {
       const privateResource = false;
       const skipPluginsValidation = false;
       
-      const deployment_inputs = Object.assign({}, this.state.form, {deployment_id: 'request_to_admin_' + deployment})
+      const blueprint_id = this.state.form.blueprint_id || 'service';
+      let deployment_inputs = this.state.form;
+      if(deployment_inputs.blueprint_id){
+        delete deployment_inputs.blueprint_id;
+      }
 
       const inputs = {
-        'blueprint_id': 'service',
-        'deployment_inputs': deployment_inputs
+        blueprint_id,
+        deployment_inputs
       }
-      
-
+      console.log('inputs', inputs);
       this.setState({ loading: true });
       var actions = new Stage.Common.BlueprintActions(this.props.toolbox);
       actions.doDeploy({ id: blueprint }, deployment, inputs, privateResource, skipPluginsValidation)
         .then((deployment) => {
+          this.updateDeploymentName();
           this.setState({ loading: false, errors: {}, success: 'Your request has been submitted and awaiting approval' });
           const onFinishRedirect = this.props.widget.configuration.onFinishRedirect;
           const template = this.props.widget.configuration.template;
